@@ -1,0 +1,412 @@
+#+TITLE: README - AI Linux
+#+STARTUP: overview
+#+OPTIONS: H:1 num:t \n:t toc:nil author:t
+#+TAGS:    meeting(m) deadline(d) SM(s) Personal(p) day(Day)
+
+* 2025b header info
+This sets up my latex print so I can print headings like I do at work.
+#+LATEX_CLASS: article
+#+LaTeX_HEADER: \usepackage{paralist}
+#+LaTeX_HEADER: \let\itemize\compactitem
+#+LaTeX_HEADER: \let\description\compactdesc
+#+LaTeX_HEADER: \let\enumerate\compactenum
+#+LATEX_HEADER: \usepackage[margin=1cm]{geometry}
+#+LATEX_CLASS_OPTIONS: [10pt,singlespace,letterpaper]
+#+LaTex_HEADER: \usepackage{titling}
+#+LATEX_HEADER: \usepackage{titlesec}
+#+LATEX_HEADER: \setcounter{secnumdepth}{6}
+#+LATEX_HEADER: \titleformat{\paragraph}{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+#+LATEX_HEADER: \titlespacing*{\paragraph}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+#+LaTex_HEADER: \usepackage{enumitem}
+#+LaTex_HEADER: \setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\scriptsize}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{lstlisting}{Verbatim}{fontsize=\scriptsize}
+#+LATEX_HEADER: \setlength{\droptitle}{-2cm} % Move the title up by 2cm
+
+[[id:b26b9c85-4359-4bf7-9f2a-6d5092bd0381][latex header tags]]
+
+
+
+* Diary
+** 11/23/25 07:53
+Created github with public visibility.
+
+
+:GPTEL_MODEL: gpt-4o-mini
+:GPTEL_BACKEND: ChatGPT
+:GPTEL_SYSTEM: You are a large language model living in Emacs and a helpful assistant. Respond concisely.
+:GPTEL_BOUNDS: ((response (1400 3734) (4019 5579) (5706 8372) (8593 11905)))
+:END:
+
+*** The goal of this project is to create on my macbook max laptop a linux virtual machine using IaC tools like Terraform and Ansible.  Everything will be done from emacs using org-mode programming.  I have create a github repository which is already setup for ssh access in this directory.  This is a public viewable repository so all passwords, secrets and api's will be stored in a gpg encrypted org file or my ~/.authinfo.gpg file, with all variables and passwords put in a public .env_example and .authinfo_example with ai generated silly passwords that will not be used but can give viewers of this github repo and idea of type and strength of passwords needed. Eventually this virtual machine will be my AI agentic test bed and run MCP agents from emacs.
+
+I do have UTM installed on my mac but I am familiar with docker and like docker compose files which the mcp agent will eventually be programming on a proxmox server I have already setup.
+
+What are the pro's and con's of UTM vs Docker on macos, I do want a vm that I can run full screen and full resolution on one of my two external monitors one of which is 4k  one that in 1080p.
+
+
+
+*** UTM vs Docker on macOS
+
+**** UTM
+*Pros:*
+- *Full OS Virtualization:* UTM allows you to run complete operating systems, enabling you to test software and configurations in a full Linux environment.
+- *Graphical User Interface (GUI):* You can run desktop applications and use full-screen mode, ideal for your 4K monitor setup.
+- *Hardware Access:* Direct access to the underlying hardware, which can improve performance for certain applications.
+- *Snapshot and Backup:* Offers the ability to take snapshots of your VM state, facilitating easy rollbacks.
+
+*Cons:*
+- *Resource Intensive:* UTM may consume more resources (CPU, RAM) compared to Docker, which could affect overall system performance.
+- *Setup and Maintenance Overhead:* Requires managing a full VM, including updates and configurations for the OS and tools within it.
+- *Less Portable:* More complex to move or share compared to containers.
+
+**** Docker
+*Pros:*
+- *Lightweight:* Docker containers are typically much lighter than virtual machines, using fewer resources and starting up faster.
+- *Easier to Manage:* Dockerizing applications is often simpler, and deploying updates is straightforward.
+- *Portability:* Easy to share and run on different systems, given consistent Docker images.
+- *Microservices Architecture:* Designed for running microservices, making it ideal for applications that need to be component-based.
+
+*Cons:*
+- *Limited GUI Support:* Docker primarily runs command-line applications; running GUI applications can be tricky and may not perform well in a container environment.
+- *Isolation vs. Compatibility:* Containers share the host OS kernel, which can lead to compatibility issues if your application relies on specific kernel features.
+- *Networking Complexity:* Setting up networking between containers and the host can be more complex than a traditional VM setup.
+
+*** Conclusion
+Given your need for a full screen and full resolution experience, UTM may be the better choice for running a complete Linux environment with GUI applications. However, if you prefer lightweight and quick deployment for microservices or CLI-based applications, Docker is more suitable, albeit with limitations on GUI support. Choose based on your specific use case—if GUI applications are essential, lean towards UTM; for microservices, lean towards Docker.
+
+***  
+I will mostly be running emacs ant that will be my most graphical Item run, I could run it all from command line but prefer a desktop environment. What would be you conclusion with this additional information.  Keep in mind everything needs to be as infrastructure as code.
+
+
+
+Given that your primary application will be Emacs, which you prefer to run in a desktop environment, UTM is likely the better option for your needs. Here’s the conclusion based on your requirements:
+
+*** UTM
+- *Pros:*
+  - *Full Desktop Environment:* UTM allows you to run a complete Linux distribution with a GUI, making it ideal for accessing Emacs in a graphical setting.
+  - *Ease of Use:* You can easily set up a desktop environment tailored to your needs, enhancing your productivity with Emacs.
+  - *Infrastructure as Code:* You can still utilize IaC tools like Terraform and Ansible to provision your VM and configure the environment consistently.
+
+- *Cons:*
+  - *Resource Usage:* Be mindful of resource consumption, especially if you plan to run additional applications simultaneously. However, since Emacs is lightweight, this shouldn't be a significant issue.
+
+*** Docker
+- *Pros:*
+  - If you later decide to run light services or CLI applications within containers, Docker can facilitate that deployment.
+
+- *Cons:*
+  - *Limited GUI Capabilities:* Running Emacs in a fully featured GUI environment is cumbersome in Docker, which isn't ideal for your use case.
+
+*** Conclusion
+Utilizing UTM will provide a seamless experience for running Emacs with a desktop environment while enabling you to manage everything as code through Terraform and Ansible for VM provisioning. You can also plan for Docker in the future for lightweight, non-GUI services if needed. This combination keeps your setup flexible and ready for your AI agentic test bed ambitions.
+
+*** Lets go with UTM, write the code to setup a debian based kubuntu desktop.  I would prefer to use ansible or terraform.
+
+
+To set up a Debian-based Kubuntu desktop using UTM with Terraform and Ansible, you generally follow these steps:
+
+*** 1. Use Terraform to Provision the VM in UTM
+Here's a basic Terraform configuration file (=main.tf=) for creating a VM in UTM:
+
+#+begin_src hcl
+provider "local" {}
+
+resource "local_file" "kubuntu_image" {
+  content = <<EOF
+  # Clone your Kubuntu ISO to this directory
+  EOF
+  filename = "${path.module}/kubuntu_iso.txt"
+}
+
+resource "local_file" "kubuntu_vm" {
+  content = <<EOF
+  {
+    "name": "Kubuntu-VM",
+    "cpu": 2,
+    "memory": 4096,
+    "disk": {
+      "size": "20g",
+      "format": "qcow2"
+    },
+    "network": {
+      "type": "virtio"
+    },
+    "iso": "${local_file.kubuntu_image.filename}"
+  }
+  EOF
+  filename = "${path.module}/kubuntu_vm.json"
+}
+
+output "kubuntu_vm_file" {
+  value = local_file.kubuntu_vm.filename
+}
+#+end_src
+
+*** 2. Use Ansible to Configure the Kubuntu Desktop
+Assuming you have the VM running Kubuntu and accessible via SSH, here's an example Ansible playbook (=setup-kubuntu.yml=) to configure it:
+
+#+begin_src yaml
+---
+- name: Configure Kubuntu Desktop
+  hosts: kubuntu
+  become: true
+  tasks:
+    - name: Update package index
+      apt:
+        update_cache: yes
+
+    - name: Install desktop environment essentials
+      apt:
+        name:
+          - kubuntu-desktop
+          - emacs
+          - git
+          - curl
+          - build-essential
+        state: present
+
+    - name: Install additional software
+      apt:
+        name:
+          - terminator  # example terminal
+          - firefox      # web browser
+        state: present
+
+    - name: Clean up unnecessary packages
+      apt:
+        autoremove: yes
+        autoclean: yes
+
+    - name: Enable SSH for remote access
+      systemd:
+        name: ssh
+        enabled: yes
+        state: started
+#+end_src
+
+*** 3. Initialize and Run with Terraform and Ansible
+
+1. *Initialize Terraform:*
+   #+begin_src bash
+   terraform init
+   #+end_src
+
+2. *Apply Terraform Plan:*
+   #+begin_src bash
+   terraform apply
+   #+end_src
+
+3. *Ensure your inventory file in Ansible:*
+   Create an inventory file (=hosts.ini=) for Ansible:
+
+   #+begin_src ini
+   [kubuntu]
+   <your_ubuntu_ip> ansible_ssh_user=<your_user>
+   #+end_src
+
+4. *Run Ansible Playbook:*
+   #+begin_src bash
+   ansible-playbook -i hosts.ini setup-kubuntu.yml
+   #+end_src
+
+*** Notes
+- Ensure that the ISO path to the Kubuntu image is correctly set in the VM JSON and that your UTM setup supports the JSON configuration.
+- You may need to manually prepare the VM and install SSH access to proceed with Ansible.
+- Customize packages installed in the Ansible playbook as per your requirements.
+
+*** convert everything you just wrote to org-mode with everything tangle in appropriate sub directories under my current directory.  Everything will be put inside a org file and for now I will handle the git commands.
+
+Certainly! Here’s how you can structure the content in Org-mode format, with tangled configuration files for Terraform and Ansible in appropriate subdirectories. You can use this in your Org file, and when you're ready, you can tangle it to generate the corresponding files.
+
+#+begin_src org
+* UTM Setup for Kubuntu Desktop
+  This document outlines the steps and code for setting up a Debian-based Kubuntu desktop using UTM, Terraform, and Ansible.
+  
+** Terraform Configuration
+   The Terraform configuration for creating a Kubuntu VM.
+
+  #+begin_src hcl :tangle "terraform/main.tf"
+  provider "local" {}
+
+  resource "local_file" "kubuntu_image" {
+    content = <<EOF
+    # Clone your Kubuntu ISO to this directory
+    EOF
+    filename = "${path.module}/kubuntu_iso.txt"
+  }
+
+  resource "local_file" "kubuntu_vm" {
+    content = <<EOF
+    {
+      "name": "Kubuntu-VM",
+      "cpu": 2,
+      "memory": 4096,
+      "disk": {
+        "size": "20g",
+        "format": "qcow2"
+      },
+      "network": {
+        "type": "virtio"
+      },
+      "iso": "${local_file.kubuntu_image.filename}"
+    }
+    EOF
+    filename = "${path.module}/kubuntu_vm.json"
+  }
+
+  output "kubuntu_vm_file" {
+    value = local_file.kubuntu_vm.filename
+  }
+  #+end_src
+
+** Ansible Playbook
+   The Ansible playbook to configure the Kubuntu desktop.
+
+  #+begin_src yaml :tangle "ansible/setup-kubuntu.yml"
+  ---
+  - name: Configure Kubuntu Desktop
+    hosts: kubuntu
+    become: true
+    tasks:
+      - name: Update package index
+        apt:
+          update_cache: yes
+
+      - name: Install desktop environment essentials
+        apt:
+          name:
+            - kubuntu-desktop
+            - emacs
+            - git
+            - curl
+            - build-essential
+          state: present
+
+      - name: Install additional software
+        apt:
+          name:
+            - terminator  # example terminal
+            - firefox      # web browser
+          state: present
+
+      - name: Clean up unnecessary packages
+        apt:
+          autoremove: yes
+          autoclean: yes
+
+      - name: Enable SSH for remote access
+        systemd:
+          name: ssh
+          enabled: yes
+          state: started
+  #+end_src
+
+** Ansible Inventory File
+   Create an Ansible inventory file.
+
+  #+begin_src ini :tangle "ansible/hosts.ini"
+  [kubuntu]
+  <your_ubuntu_ip> ansible_ssh_user=<your_user>
+  #+end_src
+
+* Execution Steps
+  1. *Initialize Terraform:* Run the following command in the terminal.
+     #+begin_src shell
+     terraform init
+     #+end_src
+
+  2. *Apply Terraform Plan:* Execute the plan with:
+     #+begin_src shell
+     terraform apply
+     #+end_src
+
+  3. *Run Ansible Playbook:* Ensure to modify the inventory file with your details, and then run:
+     #+begin_src shell
+     ansible-playbook -i ansible/hosts.ini ansible/setup-kubuntu.yml
+     #+end_src
+#+end_src
+
+*** Notes:
+- Make sure to create the =terraform= and =ansible= directories in your working directory before tangling the Org file.
+- You can replace =<your_ubuntu_ip>= and =<your_user>= with the actual IP address and username for your SSH access in the inventory file.
+- To tangle this Org file, use the command =M-x org-babel-tangle= after placing the code in your Org document. This will create the specified files in the appropriate subdirectories.
+
+* That was reasonable however there is no reason not to include steps like mkdir from a shell runable command.
+
+* GPTel statement
+ai_linux 
+#+begin_quote
+
+The goal of this project is to create on my macbook max laptop a linux virtual machine using IaC tools like Terraform and Ansible.  Everything will be done from emacs using org-mode programming.  I have create a github repository which is already setup for ssh access in this directory.  This is a public viewable repository so all passwords, secrets and api's will be stored in a gpg encrypted org file or my ~/.authinfo.gpg file, with all variables and passwords put in a public .env_example and .authinfo_example with ai generated silly passwords that will not be used but can give viewers of this github repo and idea of type and strength of passwords needed. Eventually this virtual machine will be my AI agentic test bed and run MCP agents from emacs.
+
+I do have UTM installed on my mac but I am familiar with docker and like docker compose files which the mcp agent will eventually be programming on a proxmox server I have already setup.
+
+What are the pro's and con's of UTM vs Docker on macos, I do want a vm that I can run full screen and full resolution on one of my two external monitors one of which is 4k  one that in 1080p.
+
+#+end_quote
+
+** UTM vs Docker on macOS
+
+*** UTM
+*Pros:*
+- *Full OS Virtualization:* UTM allows you to run complete operating systems, enabling you to test software and configurations in a full Linux environment.
+- *Graphical User Interface (GUI):* You can run desktop applications and use full-screen mode, ideal for your 4K monitor setup.
+- *Hardware Access:* Direct access to the underlying hardware, which can improve performance for certain applications.
+- *Snapshot and Backup:* Offers the ability to take snapshots of your VM state, facilitating easy rollbacks.
+
+*Cons:*
+- *Resource Intensive:* UTM may consume more resources (CPU, RAM) compared to Docker, which could affect overall system performance.
+- *Setup and Maintenance Overhead:* Requires managing a full VM, including updates and configurations for the OS and tools within it.
+- *Less Portable:* More complex to move or share compared to containers.
+
+*** Docker
+*Pros:*
+- *Lightweight:* Docker containers are typically much lighter than virtual machines, using fewer resources and starting up faster.
+- *Easier to Manage:* Dockerizing applications is often simpler, and deploying updates is straightforward.
+- *Portability:* Easy to share and run on different systems, given consistent Docker images.
+- *Microservices Architecture:* Designed for running microservices, making it ideal for applications that need to be component-based.
+
+*Cons:*
+- *Limited GUI Support:* Docker primarily runs command-line applications; running GUI applications can be tricky and may not perform well in a container environment.
+- *Isolation vs. Compatibility:* Containers share the host OS kernel, which can lead to compatibility issues if your application relies on specific kernel features.
+- *Networking Complexity:* Setting up networking between containers and the host can be more complex than a traditional VM setup.
+
+** Conclusion
+Given your need for a full screen and full resolution experience, UTM may be the better choice for running a complete Linux environment with GUI applications. However, if you prefer lightweight and quick deployment for microservices or CLI-based applications, Docker is more suitable, albeit with limitations on GUI support. Choose based on your specific use case—if GUI applications are essential, lean towards UTM; for microservices, lean towards Docker.
+
+** Follow up question 
+#+begin_quote
+
+I will mostly be running emacs ant that will be my most graphical Item run, I could run it all from command line but prefer a desktop environment. What would be you conclusion with this additional information.  Keep in mind everything needs to be as infrastructure as code.
+
+#+end_quote
+
+*** UTM
+- *Pros:*
+  - *Full Desktop Environment:* UTM allows you to run a complete Linux distribution with a GUI, making it ideal for accessing Emacs in a graphical setting.
+  - *Ease of Use:* You can easily set up a desktop environment tailored to your needs, enhancing your productivity with Emacs.
+  - *Infrastructure as Code:* You can still utilize IaC tools like Terraform and Ansible to provision your VM and configure the environment consistently.
+
+- *Cons:*
+  - *Resource Usage:* Be mindful of resource consumption, especially if you plan to run additional applications simultaneously. However, since Emacs is lightweight, this shouldn't be a significant issue.
+
+*** Docker
+- *Pros:*
+  - If you later decide to run light services or CLI applications within containers, Docker can facilitate that deployment.
+
+- *Cons:*
+  - *Limited GUI Capabilities:* Running Emacs in a fully featured GUI environment is cumbersome in Docker, which isn't ideal for your use case.
+
+*** Conclusion
+Utilizing UTM will provide a seamless experience for running Emacs with a desktop environment while enabling you to manage everything as code through Terraform and Ansible for VM provisioning. You can also plan for Docker in the future for lightweight, non-GUI services if needed. This combination keeps your setup flexible and ready for your AI agentic test bed ambitions.
+** UTM linux machine
+
+#+begin_quote
+
+Lets go with UTM, write the code to setup a debian based kubuntu desktop.  I would prefer to use ansible or terraform.
+
+#+end_quote
+
+

@@ -1,0 +1,147 @@
+#+TITLE: AI Linux Main Literate File
+#+STARTUP: overview
+#+OPTIONS: H:1 num:t \n:t toc:nil author:t
+#+TAGS:    meeting(m) deadline(d) SM(s) Personal(p) day(Day)
+
+* 2025b header info
+This sets up my latex print so I can print headings like I do at work.
+#+LATEX_CLASS: article
+#+LaTeX_HEADER: \usepackage{paralist}
+#+LaTeX_HEADER: \let\itemize\compactitem
+#+LaTeX_HEADER: \let\description\compactdesc
+#+LaTeX_HEADER: \let\enumerate\compactenum
+#+LATEX_HEADER: \usepackage[margin=1cm]{geometry}
+#+LATEX_CLASS_OPTIONS: [10pt,singlespace,letterpaper]
+#+LaTex_HEADER: \usepackage{titling}
+#+LATEX_HEADER: \usepackage{titlesec}
+#+LATEX_HEADER: \setcounter{secnumdepth}{6}
+#+LATEX_HEADER: \titleformat{\paragraph}{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+#+LATEX_HEADER: \titlespacing*{\paragraph}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+#+LaTex_HEADER: \usepackage{enumitem}
+#+LaTex_HEADER: \setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\scriptsize}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{lstlisting}{Verbatim}{fontsize=\scriptsize}
+#+LATEX_HEADER: \setlength{\droptitle}{-2cm} % Move the title up by 2cm
+
+[[id:b26b9c85-4359-4bf7-9f2a-6d5092bd0381][latex header tags]]
+
+
+
+
+
+
+* UTM Setup for Kubuntu Desktop
+  This document outlines the steps and code for setting up a Debian-based Kubuntu desktop using UTM, Terraform, and Ansible.
+  
+** Terraform Configuration
+   The Terraform configuration for creating a Kubuntu VM.
+
+  #+begin_src hcl :tangle "terraform/main.tf"
+  provider "local" {}
+
+  resource "local_file" "kubuntu_image" {
+    content = <<EOF
+    # Clone your Kubuntu ISO to this directory
+    EOF
+    filename = "${path.module}/kubuntu_iso.txt"
+  }
+
+  resource "local_file" "kubuntu_vm" {
+    content = <<EOF
+    {
+      "name": "Kubuntu-VM",
+      "cpu": 2,
+      "memory": 4096,
+      "disk": {
+        "size": "20g",
+        "format": "qcow2"
+      },
+      "network": {
+        "type": "virtio"
+      },
+      "iso": "${local_file.kubuntu_image.filename}"
+    }
+    EOF
+    filename = "${path.module}/kubuntu_vm.json"
+  }
+
+  output "kubuntu_vm_file" {
+    value = local_file.kubuntu_vm.filename
+  }
+  #+end_src
+
+** Ansible Playbook
+   The Ansible playbook to configure the Kubuntu desktop.
+
+  #+begin_src yaml :tangle "ansible/setup-kubuntu.yml"
+  ---
+  - name: Configure Kubuntu Desktop
+    hosts: kubuntu
+    become: true
+    tasks:
+      - name: Update package index
+        apt:
+          update_cache: yes
+
+      - name: Install desktop environment essentials
+        apt:
+          name:
+            - kubuntu-desktop
+            - emacs
+            - git
+            - curl
+            - build-essential
+          state: present
+
+      - name: Install additional software
+        apt:
+          name:
+            - terminator  # example terminal
+            - firefox      # web browser
+          state: present
+
+      - name: Clean up unnecessary packages
+        apt:
+          autoremove: yes
+          autoclean: yes
+
+      - name: Enable SSH for remote access
+        systemd:
+          name: ssh
+          enabled: yes
+          state: started
+  #+end_src
+
+** Ansible Inventory File
+   Create an Ansible inventory file.
+
+  #+begin_src ini :tangle "ansible/hosts.ini"
+  [kubuntu]
+  <your_ubuntu_ip> ansible_ssh_user=<your_user>
+  #+end_src
+
+  
+* Execution Steps
+  1. *Initialize Terraform:* Run the following command in the terminal.
+     #+begin_src shell
+     terraform init
+     #+end_src
+
+  2. *Apply Terraform Plan:* Execute the plan with:
+     #+begin_src shell
+     terraform apply
+     #+end_src
+
+  3. *Run Ansible Playbook:* Ensure to modify the inventory file with your details, and then run:
+     #+begin_src shell
+     ansible-playbook -i ansible/hosts.ini ansible/setup-kubuntu.yml
+     #+end_src
+#+end_src
+
+*** Notes:
+- Make sure to create the =terraform= and =ansible= directories in your working directory before tangling the Org file.
+- You can replace =<your_ubuntu_ip>= and =<your_user>= with the actual IP address and username for your SSH access in the inventory file.
+- To tangle this Org file, use the command =M-x org-babel-tangle= after placing the code in your Org document. This will create the specified files in the appropriate subdirectories.
+
+*** 
